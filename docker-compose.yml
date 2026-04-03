@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: verbex_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - verbex_network
+
+  auth-service:
+    build: ./services/auth-service
+    container_name: verbex_auth
+    restart: always
+    env_file: .env
+    ports:
+      - '4001:4001'
+    depends_on:
+      - postgres
+    networks:
+      - verbex_network
+
+  agent-service:
+    build: ./services/agent-service
+    container_name: verbex_agent
+    restart: always
+    env_file: .env
+    ports:
+      - '4002:4002'
+    depends_on:
+      - postgres
+    networks:
+      - verbex_network
+
+  chat-service:
+    build: ./services/chat-service
+    container_name: verbex_chat
+    restart: always
+    env_file: .env
+    ports:
+      - '4003:4003'
+    depends_on:
+      - postgres
+    networks:
+      - verbex_network
+
+  admin-dashboard:
+    build: ./frontend/admin-dashboard
+    container_name: verbex_admin
+    restart: always
+    env_file: .env
+    ports:
+      - '3000:3000'
+    networks:
+      - verbex_network
+
+  chat-widget:
+    build: ./frontend/chat-widget
+    container_name: verbex_chat_widget
+    restart: always
+    env_file: .env
+    ports:
+      - '3001:3000'
+    networks:
+      - verbex_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: verbex_nginx
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth-service
+      - agent-service
+      - chat-service
+    networks:
+      - verbex_network
+
+volumes:
+  postgres_data:
+
+networks:
+  verbex_network:
+    driver: bridge
