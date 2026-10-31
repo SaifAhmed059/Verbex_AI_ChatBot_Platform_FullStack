@@ -28,7 +28,6 @@ export default function DashboardPage() {
     load();
   };
 
-  const chatWidgetUrl = process.env.NEXT_PUBLIC_CHAT_WIDGET_URL || '';
 
   if (loading) return (
     <div className="p-8 flex items-center justify-center h-64">
@@ -92,8 +91,8 @@ export default function DashboardPage() {
                   className="btn-secondary text-xs flex-1 py-1.5">Edit</button>
                 <Link href={`/dashboard/agents/${agent.id}/conversations`}
                   className="btn-secondary text-xs flex-1 py-1.5 text-center">Conversations</Link>
-                <a href={chatWidgetUrl ? `${chatWidgetUrl}/chat/${agent.id}` : `/chat/${agent.id}`} target="_blank" rel="noopener noreferrer"
-                  className="btn-secondary text-xs px-2 py-1.5 flex items-center gap-1 text-brand-600 hover:text-brand-700" title="Chat with agent">
+                <a href={`/chat/${agent.id}`} target="_blank" rel="noopener noreferrer"
+                  className="btn-secondary text-xs px-2 py-1.5 flex items-center gap-1 text-brand-600 hover:text-brand-700 font-medium" title="Chat with agent">
                   <ExternalLink size={12} />
                   <span>Chat</span>
                 </a>

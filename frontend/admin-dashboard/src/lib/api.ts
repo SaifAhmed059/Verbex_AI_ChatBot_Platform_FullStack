@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://verbex-ai-chatbot-platform-fullstack.onrender.com/api';
 
 const client = axios.create({ baseURL: API });
 

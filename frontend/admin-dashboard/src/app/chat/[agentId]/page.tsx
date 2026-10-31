@@ -3,8 +3,8 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { Send, Bot, User, Zap, AlertCircle } from 'lucide-react';
 
-const API = process.env.NEXT_PUBLIC_CHAT_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
-const AGENT_API = process.env.NEXT_PUBLIC_AGENT_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost/api';
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://verbex-ai-chatbot-platform-fullstack.onrender.com/api';
+const AGENT_API = API;
 
 interface Message {
   role: 'user' | 'assistant';
