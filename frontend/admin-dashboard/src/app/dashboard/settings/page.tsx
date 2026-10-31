@@ -32,7 +32,11 @@ export default function SettingsPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const chatWidgetUrl = process.env.NEXT_PUBLIC_CHAT_WIDGET_URL || 'http://localhost:3001';
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    setOrigin(process.env.NEXT_PUBLIC_CHAT_WIDGET_URL || window.location.origin);
+  }, []);
 
   return (
     <div className="p-8 max-w-2xl">
@@ -104,7 +108,7 @@ export default function SettingsPage() {
         <p className="text-sm text-gray-500 mb-4">Add your agent's chat widget to any website using an iframe.</p>
         <pre className="bg-gray-50 rounded-lg p-4 text-xs font-mono text-gray-600 overflow-x-auto whitespace-pre-wrap">
 {`<iframe
-  src="${chatWidgetUrl}/chat/YOUR_AGENT_ID"
+  src="${origin ? `${origin}/chat/YOUR_AGENT_ID` : '/chat/YOUR_AGENT_ID'}"
   width="400"
   height="600"
   frameborder="0"

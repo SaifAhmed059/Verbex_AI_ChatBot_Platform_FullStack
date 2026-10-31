@@ -49,7 +49,10 @@ export default function ConversationsPage() {
         <div className="card p-16 text-center">
           <MessageSquare size={40} className="text-gray-200 mx-auto mb-3" />
           <p className="text-gray-500">No conversations yet</p>
-          <p className="text-gray-400 text-sm mt-1">Share the public chat link to start receiving messages</p>
+          <p className="text-gray-400 text-sm mt-1 mb-4">Share the public chat link to start receiving messages</p>
+          <a href={`/chat/${id}`} target="_blank" rel="noopener noreferrer" className="btn-primary inline-flex items-center gap-2 text-sm">
+            <span>Open Chat with Bot</span>
+          </a>
         </div>
       ) : (
         <div className="space-y-3">
