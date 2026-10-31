@@ -6,7 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors();
-  await app.listen(process.env.CHAT_SERVICE_PORT || 4003);
-  console.log(`Chat Service running on port ${process.env.CHAT_SERVICE_PORT || 4003}`);
+  const port = process.env.PORT || process.env.CHAT_SERVICE_PORT || 4003;
+  await app.listen(port);
+  console.log(`Chat Service running on port ${port}`);
 }
 bootstrap();

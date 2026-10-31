@@ -6,7 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors();
-  await app.listen(process.env.AUTH_SERVICE_PORT || 4001);
-  console.log(`Auth Service running on port ${process.env.AUTH_SERVICE_PORT || 4001}`);
+  const port = process.env.PORT || process.env.AUTH_SERVICE_PORT || 4001;
+  await app.listen(port);
+  console.log(`Auth Service running on port ${port}`);
 }
 bootstrap();
