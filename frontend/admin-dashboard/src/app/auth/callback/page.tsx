@@ -11,20 +11,43 @@ function CallbackContent() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // 1. Check for GitHub OAuth code in query params (?code=...)
     const code = searchParams.get('code');
-    if (!code) {
-      setError('Authorization code missing');
+    if (code) {
+      authApi.githubAuth(code)
+        .then(({ data }) => {
+          setAuthData(data);
+          router.push('/dashboard');
+        })
+        .catch((err) => {
+          setError(err.response?.data?.message || 'GitHub OAuth failed');
+        });
       return;
     }
 
-    authApi.githubAuth(code)
-      .then(({ data }) => {
-        setAuthData(data);
-        router.push('/dashboard');
-      })
-      .catch((err) => {
-        setError(err.response?.data?.message || 'OAuth authentication failed');
-      });
+    // 2. Check for Google OAuth access_token in URL hash (#access_token=...)
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token') || hashParams.get('id_token');
+      if (accessToken) {
+        authApi.googleAuth(accessToken)
+          .then(({ data }) => {
+            setAuthData(data);
+            router.push('/dashboard');
+          })
+          .catch((err) => {
+            setError(err.response?.data?.message || 'Google OAuth failed');
+          });
+        return;
+      }
+    }
+
+    // If neither exists
+    const timer = setTimeout(() => {
+      setError('No OAuth authorization credentials received.');
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, [searchParams, router, setAuthData]);
 
   if (error) {
@@ -52,7 +75,7 @@ function CallbackContent() {
 export default function AuthCallbackPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="card p-8 w-full max-w-sm text-center">
+      <div className="card p-8 w-full max-w-sm text-center shadow-sm">
         <Suspense
           fallback={
             <div className="flex flex-col items-center gap-3">

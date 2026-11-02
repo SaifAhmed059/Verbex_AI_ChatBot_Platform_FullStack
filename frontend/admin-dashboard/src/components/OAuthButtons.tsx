@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { authApi } from '@/lib/api';
@@ -9,53 +9,23 @@ export default function OAuthButtons({ onError }: { onError: (msg: string) => vo
   const { setAuthData } = useAuth();
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
-  // Initialize Google One Tap / Sign In if Client ID exists
-  useEffect(() => {
-    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    if (!googleClientId) return;
-
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      if ((window as any).google?.accounts?.id) {
-        (window as any).google.accounts.id.initialize({
-          client_id: googleClientId,
-          callback: async (response: any) => {
-            if (response.credential) {
-              setLoadingProvider('google');
-              try {
-                const { data } = await authApi.googleAuth(response.credential);
-                setAuthData(data);
-                router.push('/dashboard');
-              } catch (err: any) {
-                onError(err.response?.data?.message || 'Google sign in failed');
-              } finally {
-                setLoadingProvider(null);
-              }
-            }
-          },
-        });
-      }
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, [router, setAuthData, onError]);
-
   const handleGoogleClick = async () => {
-    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    if (googleClientId && (window as any).google?.accounts?.id) {
-      (window as any).google.accounts.id.prompt();
+    const rawGoogleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const googleClientId = rawGoogleClientId ? rawGoogleClientId.trim() : '';
+
+    if (googleClientId) {
+      setLoadingProvider('google');
+      const redirectUri = `${window.location.origin}/auth/callback`;
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
+        googleClientId
+      )}&redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}&response_type=token&scope=email%20profile&prompt=select_account`;
+      window.location.href = googleAuthUrl;
       return;
     }
 
-    // Direct / Demo OAuth flow (guarantees 1-click test for evaluators/supervisors)
+    // Direct / Demo OAuth flow (if no client ID configured yet)
     setLoadingProvider('google');
     try {
       const { data } = await authApi.demoOAuth('google');
@@ -69,14 +39,19 @@ export default function OAuthButtons({ onError }: { onError: (msg: string) => vo
   };
 
   const handleGitHubClick = async () => {
-    const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    const rawGithubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    const githubClientId = rawGithubClientId ? rawGithubClientId.trim() : '';
+
     if (githubClientId) {
+      setLoadingProvider('github');
       const redirectUri = `${window.location.origin}/auth/callback`;
-      window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user:email`;
+      window.location.href = `https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(
+        githubClientId
+      )}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user:email`;
       return;
     }
 
-    // Direct / Demo OAuth flow (guarantees 1-click test for evaluators/supervisors)
+    // Direct / Demo OAuth flow (if no client ID configured yet)
     setLoadingProvider('github');
     try {
       const { data } = await authApi.demoOAuth('github');
@@ -117,7 +92,7 @@ export default function OAuthButtons({ onError }: { onError: (msg: string) => vo
           />
         </svg>
         <span>
-          {loadingProvider === 'google' ? 'Signing in with Google…' : 'Continue with Google'}
+          {loadingProvider === 'google' ? 'Opening Google Sign In…' : 'Continue with Google'}
         </span>
       </button>
 
@@ -136,7 +111,7 @@ export default function OAuthButtons({ onError }: { onError: (msg: string) => vo
           />
         </svg>
         <span>
-          {loadingProvider === 'github' ? 'Signing in with GitHub…' : 'Continue with GitHub'}
+          {loadingProvider === 'github' ? 'Redirecting to GitHub…' : 'Continue with GitHub'}
         </span>
       </button>
 

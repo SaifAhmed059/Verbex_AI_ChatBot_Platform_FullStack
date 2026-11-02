@@ -65,12 +65,22 @@ export class AuthService {
       throw new BadRequestException('Google credential token required');
     }
     try {
-      const response = await axios.get(
-        `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`,
-        { timeout: 8000 },
-      );
-      const data = response.data;
-      if (!data.email) {
+      let data: any;
+      try {
+        const response = await axios.get(
+          `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`,
+          { timeout: 8000 },
+        );
+        data = response.data;
+      } catch {
+        const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${credential}` },
+          timeout: 8000,
+        });
+        data = response.data;
+      }
+
+      if (!data?.email) {
         throw new UnauthorizedException('Unable to retrieve email from Google');
       }
 
