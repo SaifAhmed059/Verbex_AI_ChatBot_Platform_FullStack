@@ -1,4 +1,4 @@
-import { Module, Global } from '@nestjs/common';
+import { Module, Global, OnModuleInit, Inject } from '@nestjs/common';
 import { Pool } from 'pg';
 
 export const DB_POOL = 'DB_POOL';
@@ -21,4 +21,20 @@ export const DB_POOL = 'DB_POOL';
   ],
   exports: [DB_POOL],
 })
-export class DatabaseModule {}
+export class DatabaseModule implements OnModuleInit {
+  constructor(@Inject(DB_POOL) private readonly pool: Pool) {}
+
+  async onModuleInit() {
+    try {
+      await this.pool.query(`
+        ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_provider VARCHAR(50) DEFAULT 'local';
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS provider_id VARCHAR(255);
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+      `);
+      console.log('Database schema verified: OAuth columns ready');
+    } catch (err: any) {
+      console.warn('Schema migration check warning:', err.message);
+    }
+  }
+}

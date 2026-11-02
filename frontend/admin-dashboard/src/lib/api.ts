@@ -43,6 +43,12 @@ export const authApi = {
     client.post('/auth/signup', { email, password }),
   login: (email: string, password: string) =>
     client.post('/auth/login', { email, password }),
+  googleAuth: (credential: string) =>
+    client.post('/auth/google', { credential }),
+  githubAuth: (code: string) =>
+    client.post('/auth/github', { code }),
+  demoOAuth: (provider: 'google' | 'github') =>
+    client.post('/auth/oauth/demo', { provider }),
   profile: () => client.get('/auth/profile'),
   generateApiKey: () => client.post('/auth/api-key'),
 };

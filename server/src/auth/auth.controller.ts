@@ -20,6 +20,24 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  @Post('google')
+  @HttpCode(HttpStatus.OK)
+  googleAuth(@Body() body: { credential: string }) {
+    return this.authService.googleAuth(body.credential);
+  }
+
+  @Post('github')
+  @HttpCode(HttpStatus.OK)
+  githubAuth(@Body() body: { code: string }) {
+    return this.authService.githubAuth(body.code);
+  }
+
+  @Post('oauth/demo')
+  @HttpCode(HttpStatus.OK)
+  demoOAuth(@Body() body: { provider: 'google' | 'github' }) {
+    return this.authService.demoOAuth(body.provider || 'google');
+  }
+
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   refresh(@Body() dto: RefreshDto) {

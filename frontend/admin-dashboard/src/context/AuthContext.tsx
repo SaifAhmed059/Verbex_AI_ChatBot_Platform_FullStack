@@ -2,12 +2,13 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { authApi } from '@/lib/api';
 
-interface User { id: string; email: string }
+interface User { id: string; email: string; auth_provider?: string; avatar_url?: string }
 interface AuthCtx {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
+  setAuthData: (data: { user: User; accessToken: string; refreshToken: string }) => void;
   logout: () => void;
 }
 
@@ -29,13 +30,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const { data } = await authApi.login(email, password);
-    localStorage.setItem('accessToken', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
-    setUser(data.user);
+    setAuthData(data);
   };
 
   const signup = async (email: string, password: string) => {
     const { data } = await authApi.signup(email, password);
+    setAuthData(data);
+  };
+
+  const setAuthData = (data: { user: User; accessToken: string; refreshToken: string }) => {
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     setUser(data.user);
@@ -47,5 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = '/login';
   };
 
-  return <Ctx.Provider value={{ user, loading, login, signup, logout }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ user, loading, login, signup, setAuthData, logout }}>
+      {children}
+    </Ctx.Provider>
+  );
 }
