@@ -70,16 +70,17 @@ export class LlmService {
         }
       }
 
-      // 2. OpenRouter Models (Free & Default)
+      // 2. OpenRouter Models (Active Free Models)
       let actualModel = provider;
       if (
         !actualModel ||
         actualModel === 'openai' ||
         actualModel === 'anthropic' ||
         actualModel.includes('gpt-oss') ||
-        actualModel.includes('gemma-3n')
+        actualModel.includes('gemma-3n') ||
+        actualModel.includes('gemma-4')
       ) {
-        actualModel = 'openrouter/free';
+        actualModel = 'nvidia/nemotron-3.5-lightning:free';
       }
 
       let stream;
@@ -95,9 +96,12 @@ export class LlmService {
           ],
         });
       } catch (firstErr: any) {
-        console.warn(`Model ${actualModel} failed (${firstErr.message}), falling back to openrouter/free`);
+        const fallback = actualModel === 'nvidia/nemotron-3.5-lightning:free'
+          ? 'cohere/north-mini-code:free'
+          : 'nvidia/nemotron-3.5-lightning:free';
+        console.warn(`Model ${actualModel} failed (${firstErr.message}), falling back to ${fallback}`);
         stream = await this.openai.chat.completions.create({
-          model: 'openrouter/free',
+          model: fallback,
           max_tokens: 1024,
           temperature,
           stream: true,

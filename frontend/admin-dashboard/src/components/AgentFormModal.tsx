@@ -12,7 +12,7 @@ interface Props {
 export default function AgentFormModal({ agent, onClose, onSaved }: Props) {
   const [form, setForm] = useState({
     name: '', systemPrompt: '', temperature: 0.7,
-    llmProvider: 'openrouter/free', webhookUrl: '',
+    llmProvider: 'nvidia/nemotron-3.5-lightning:free', webhookUrl: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -87,10 +87,10 @@ export default function AgentFormModal({ agent, onClose, onSaved }: Props) {
             <div>
               <label className="label">LLM Provider</label>
               <select value={form.llmProvider} onChange={set('llmProvider')} className="input">
-                <option value="openrouter/free">OpenRouter Auto (Free - Recommended)</option>
-                <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (Free & Fast)</option>
-                <option value="google/gemma-4-31b-it:free">Google Gemma 4 (Free)</option>
-                <option value="anthropic">Anthropic (Claude Haiku)</option>
+                <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (Fast & Free)</option>
+                <option value="cohere/north-mini-code:free">Cohere North (Smart AI - Free)</option>
+                <option value="openrouter/free">OpenRouter Auto (Auto-Select Free)</option>
+                <option value="dots-studio/dots-3-note-preview:free">Dots Studio 3 (Free Preview)</option>
               </select>
             </div>
             <div>
