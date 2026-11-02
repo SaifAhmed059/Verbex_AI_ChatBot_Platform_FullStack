@@ -51,18 +51,37 @@ export class LlmService {
           }
         }
       } else {
-        // Default: OpenAI (now routed to OpenRouter)
-        const actualModel = (provider === 'openai') ? 'openai/gpt-oss-120b:free' : provider;
-        const stream = await this.openai.chat.completions.create({
-          model: actualModel,
-          max_tokens: 1024,
-          temperature,
-          stream: true,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            ...messages,
-          ],
-        });
+        // Default: OpenRouter free models
+        let actualModel = provider;
+        if (!actualModel || actualModel === 'openai' || actualModel.includes('gpt-oss') || actualModel.includes('gemma-3n')) {
+          actualModel = 'openrouter/free';
+        }
+
+        let stream;
+        try {
+          stream = await this.openai.chat.completions.create({
+            model: actualModel,
+            max_tokens: 1024,
+            temperature,
+            stream: true,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...messages,
+            ],
+          });
+        } catch (firstErr: any) {
+          console.warn(`Primary model ${actualModel} failed (${firstErr.message}), falling back to openrouter/free`);
+          stream = await this.openai.chat.completions.create({
+            model: 'openrouter/free',
+            max_tokens: 1024,
+            temperature,
+            stream: true,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              ...messages,
+            ],
+          });
+        }
 
         for await (const chunk of stream) {
           const text = chunk.choices[0]?.delta?.content || '';

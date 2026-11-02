@@ -12,7 +12,7 @@ interface Props {
 export default function AgentFormModal({ agent, onClose, onSaved }: Props) {
   const [form, setForm] = useState({
     name: '', systemPrompt: '', temperature: 0.7,
-    llmProvider: 'openai/gpt-oss-120b:free', webhookUrl: '',
+    llmProvider: 'openrouter/free', webhookUrl: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -87,9 +87,10 @@ export default function AgentFormModal({ agent, onClose, onSaved }: Props) {
             <div>
               <label className="label">LLM Provider</label>
               <select value={form.llmProvider} onChange={set('llmProvider')} className="input">
-                <option value="openai/gpt-oss-120b:free">GPT-OSS 120B (Free)</option>
-                <option value="google/gemma-3n-e2b-it:free">Google Gemma 3N (Free)</option>
-                <option value="anthropic">Anthropic (Haiku)</option>
+                <option value="openrouter/free">OpenRouter Auto (Free - Recommended)</option>
+                <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (Free & Fast)</option>
+                <option value="google/gemma-4-31b-it:free">Google Gemma 4 (Free)</option>
+                <option value="anthropic">Anthropic (Claude Haiku)</option>
               </select>
             </div>
             <div>
