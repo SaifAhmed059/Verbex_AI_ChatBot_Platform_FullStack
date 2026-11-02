@@ -14,7 +14,17 @@ export class LlmService {
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: process.env.OPENAI_API_KEY 
   });
-  private anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  private anthropic?: Anthropic;
+
+  constructor() {
+    if (process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY.startsWith('sk-ant-')) {
+      try {
+        this.anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      } catch (e) {
+        console.warn('Anthropic client init skipped:', e.message);
+      }
+    }
+  }
 
   async streamResponse(
     provider: string,
@@ -31,64 +41,78 @@ export class LlmService {
     let fullContent = '';
 
     try {
-      if (provider === 'anthropic') {
-        const stream = await this.anthropic.messages.stream({
-          model: 'claude-3-5-haiku-20241022',
-          max_tokens: 1024,
-          system: systemPrompt,
-          temperature,
-          messages,
-        });
-
-        for await (const chunk of stream) {
-          if (
-            chunk.type === 'content_block_delta' &&
-            chunk.delta.type === 'text_delta'
-          ) {
-            const text = chunk.delta.text;
-            fullContent += text;
-            res.write(`data: ${JSON.stringify({ text })}\n\n`);
-          }
-        }
-      } else {
-        // Default: OpenRouter free models
-        let actualModel = provider;
-        if (!actualModel || actualModel === 'openai' || actualModel.includes('gpt-oss') || actualModel.includes('gemma-3n')) {
-          actualModel = 'openrouter/free';
-        }
-
-        let stream;
+      // 1. Anthropic Claude (only if valid Anthropic API key is set)
+      if (provider === 'anthropic' && this.anthropic) {
         try {
-          stream = await this.openai.chat.completions.create({
-            model: actualModel,
+          const stream = await this.anthropic.messages.stream({
+            model: 'claude-3-5-haiku-20241022',
             max_tokens: 1024,
+            system: systemPrompt,
             temperature,
-            stream: true,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              ...messages,
-            ],
+            messages,
           });
-        } catch (firstErr: any) {
-          console.warn(`Primary model ${actualModel} failed (${firstErr.message}), falling back to openrouter/free`);
-          stream = await this.openai.chat.completions.create({
-            model: 'openrouter/free',
-            max_tokens: 1024,
-            temperature,
-            stream: true,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              ...messages,
-            ],
-          });
-        }
 
-        for await (const chunk of stream) {
-          const text = chunk.choices[0]?.delta?.content || '';
-          if (text) {
-            fullContent += text;
-            res.write(`data: ${JSON.stringify({ text })}\n\n`);
+          for await (const chunk of stream) {
+            if (
+              chunk.type === 'content_block_delta' &&
+              chunk.delta.type === 'text_delta'
+            ) {
+              const text = chunk.delta.text;
+              fullContent += text;
+              res.write(`data: ${JSON.stringify({ text })}\n\n`);
+            }
           }
+          res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+          res.end();
+          return fullContent;
+        } catch (anthropicErr: any) {
+          console.warn(`Anthropic call failed (${anthropicErr.message}), falling back to OpenRouter`);
+        }
+      }
+
+      // 2. OpenRouter Models (Free & Default)
+      let actualModel = provider;
+      if (
+        !actualModel ||
+        actualModel === 'openai' ||
+        actualModel === 'anthropic' ||
+        actualModel.includes('gpt-oss') ||
+        actualModel.includes('gemma-3n')
+      ) {
+        actualModel = 'openrouter/free';
+      }
+
+      let stream;
+      try {
+        stream = await this.openai.chat.completions.create({
+          model: actualModel,
+          max_tokens: 1024,
+          temperature,
+          stream: true,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages,
+          ],
+        });
+      } catch (firstErr: any) {
+        console.warn(`Model ${actualModel} failed (${firstErr.message}), falling back to openrouter/free`);
+        stream = await this.openai.chat.completions.create({
+          model: 'openrouter/free',
+          max_tokens: 1024,
+          temperature,
+          stream: true,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages,
+          ],
+        });
+      }
+
+      for await (const chunk of stream) {
+        const text = chunk.choices[0]?.delta?.content || '';
+        if (text) {
+          fullContent += text;
+          res.write(`data: ${JSON.stringify({ text })}\n\n`);
         }
       }
     } catch (error: any) {
