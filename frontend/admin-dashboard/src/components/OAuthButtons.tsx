@@ -71,7 +71,7 @@ export default function OAuthButtons({ onError }: { onError: (msg: string) => vo
         type="button"
         onClick={handleGoogleClick}
         disabled={loadingProvider !== null}
-        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 disabled:opacity-60 disabled:cursor-not-allowed bg-white shadow-sm"
+        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 border border-slate-200 dark:border-slate-700/80 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-all text-sm font-medium text-slate-700 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed bg-white dark:bg-slate-900/60 shadow-sm hover:shadow"
       >
         <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
           <path
@@ -101,9 +101,9 @@ export default function OAuthButtons({ onError }: { onError: (msg: string) => vo
         type="button"
         onClick={handleGitHubClick}
         disabled={loadingProvider !== null}
-        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 disabled:opacity-60 disabled:cursor-not-allowed bg-white shadow-sm"
+        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 border border-slate-200 dark:border-slate-700/80 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-all text-sm font-medium text-slate-700 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed bg-white dark:bg-slate-900/60 shadow-sm hover:shadow"
       >
-        <svg className="w-5 h-5 flex-shrink-0 text-gray-900 fill-current" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 flex-shrink-0 text-slate-900 dark:text-white fill-current" viewBox="0 0 24 24">
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -117,11 +117,11 @@ export default function OAuthButtons({ onError }: { onError: (msg: string) => vo
 
       {/* Divider */}
       <div className="relative flex py-2 items-center">
-        <div className="flex-grow border-t border-gray-200"></div>
-        <span className="flex-shrink mx-4 text-xs uppercase tracking-wider text-gray-400 font-medium">
+        <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+        <span className="flex-shrink mx-4 text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 font-medium">
           or continue with email
         </span>
-        <div className="flex-grow border-t border-gray-200"></div>
+        <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
       </div>
     </div>
   );

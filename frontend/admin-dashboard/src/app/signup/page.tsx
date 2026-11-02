@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import OAuthButtons from '@/components/OAuthButtons';
+import ThemeToggle from '@/components/ThemeToggle';
+import { Bot, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function SignupPage() {
   const { signup } = useAuth();
@@ -17,7 +19,7 @@ export default function SignupPage() {
     e.preventDefault();
     setError('');
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('Password must be at least 6 characters long');
       return;
     }
     setLoading(true);
@@ -25,62 +27,102 @@ export default function SignupPage() {
       await signup(email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Signup failed');
+      setError(err.response?.data?.message || 'Failed to create account');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="card p-8 w-full max-w-md shadow-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Create account</h1>
-          <p className="text-gray-500 mt-1 text-sm">Start building AI agents today</p>
-        </div>
+    <div className="min-h-screen relative flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-12 transition-colors duration-300 overflow-hidden">
+      {/* Ambient background glow */}
+      <div className="absolute top-1/4 -right-20 w-80 h-80 bg-brand-500/10 dark:bg-brand-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
 
-        {/* OAuth2 Providers (Google & GitHub) */}
-        <div className="mb-5">
-          <OAuthButtons onError={(msg) => setError(msg)} />
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="label">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input"
-              placeholder="you@example.com"
-              required
-            />
+      {/* Top Bar with Brand & Theme Toggle */}
+      <div className="absolute top-6 left-6 right-6 flex items-center justify-between max-w-5xl mx-auto">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
+            <Bot size={20} className="text-white" />
           </div>
-          <div>
-            <label className="label">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input"
-              placeholder="Min. 6 characters"
-              required
-            />
+          <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">
+            Verbex<span className="text-brand-500">.ai</span>
+          </span>
+        </Link>
+        <ThemeToggle />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-2xl p-8 shadow-xl shadow-slate-200/50 dark:shadow-black/50">
+          <div className="mb-6 text-center">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-3">
+              <Sparkles size={12} />
+              <span>Free Plan • No Credit Card Required</span>
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Create your account
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
+              Deploy intelligent LLM chat agents in seconds
+            </p>
           </div>
 
-          {error && <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+          {/* OAuth2 Providers (Google & GitHub) */}
+          <div className="mb-5">
+            <OAuthButtons onError={(msg) => setError(msg)} />
+          </div>
 
-          <button type="submit" className="btn-primary w-full py-2.5 font-medium" disabled={loading}>
-            {loading ? 'Creating account…' : 'Create account'}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                Work or Personal Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-all"
+                placeholder="you@domain.com"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                Choose Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-all"
+                placeholder="Min. 6 characters"
+                required
+              />
+            </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Already have an account?{' '}
-          <Link href="/login" className="text-brand-500 hover:underline font-medium">
-            Sign in
-          </Link>
-        </p>
+            {error && (
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-medium">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-medium text-sm shadow-md shadow-brand-500/25 transition-all flex items-center justify-center gap-2 group disabled:opacity-60"
+              disabled={loading}
+            >
+              <span>{loading ? 'Creating Account…' : 'Get Started Free'}</span>
+              {!loading && <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
+            Already have an account?{' '}
+            <Link href="/login" className="text-brand-500 hover:text-brand-600 dark:text-brand-400 font-semibold transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
