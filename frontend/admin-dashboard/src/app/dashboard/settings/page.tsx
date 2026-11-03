@@ -52,7 +52,7 @@ export default function SettingsPage() {
 />`;
 
   return (
-    <div className="p-6 md:p-10 max-w-4xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 md:p-10 max-w-4xl mx-auto space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="pb-6 border-b border-slate-200/80 dark:border-slate-800">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -172,8 +172,8 @@ export default function SettingsPage() {
       </div>
 
       {/* Embed Chat Widget Card */}
-      <div className="card p-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="card p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
               <Code size={18} />

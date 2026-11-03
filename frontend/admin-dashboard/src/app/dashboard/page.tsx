@@ -74,7 +74,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 md:p-10 max-w-7xl mx-auto space-y-6 sm:space-y-8">
       {/* Top Banner / Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
         <div>
@@ -86,7 +86,7 @@ export default function DashboardPage() {
               {agents.length} active
             </span>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Create, manage, and deploy autonomous conversational agents with multi-model LLMs.
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function DashboardPage() {
             setEditAgent(null);
             setShowModal(true);
           }}
-          className="btn-primary inline-flex items-center gap-2 shadow-glow text-sm font-semibold"
+          className="btn-primary inline-flex items-center justify-center gap-2 shadow-glow text-sm font-semibold w-full sm:w-auto"
         >
           <Plus size={18} />
           <span>New AI Agent</span>
@@ -104,7 +104,7 @@ export default function DashboardPage() {
       </div>
 
       {/* System Status Metrics Pill Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
         <div className="p-3.5 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800 flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
           <div className="text-xs">

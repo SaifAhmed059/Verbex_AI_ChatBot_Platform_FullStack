@@ -61,8 +61,8 @@ export default function AgentFormModal({ agent, onClose, onSaved }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
-      <div className="card w-full max-w-lg p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 transition-all">
+      <div className="card w-full max-w-lg max-h-[92vh] overflow-y-auto p-5 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">

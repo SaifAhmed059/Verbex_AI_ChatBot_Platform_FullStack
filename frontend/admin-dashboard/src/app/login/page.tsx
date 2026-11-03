@@ -30,13 +30,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-12 transition-colors duration-300 overflow-hidden">
+    <div className="min-h-screen relative flex flex-col justify-between bg-slate-50 dark:bg-slate-950 px-4 py-6 sm:py-10 transition-colors duration-300 overflow-x-hidden">
       {/* Ambient background glow */}
       <div className="absolute top-1/4 -left-20 w-80 h-80 bg-brand-500/10 dark:bg-brand-500/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Bar with Brand & Theme Toggle */}
-      <div className="absolute top-6 left-6 right-6 flex items-center justify-between max-w-5xl mx-auto">
+      <div className="w-full max-w-md mx-auto flex items-center justify-between mb-6 z-10">
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
             <Bot size={20} className="text-white" />
@@ -48,13 +48,13 @@ export default function LoginPage() {
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-2xl p-8 shadow-xl shadow-slate-200/50 dark:shadow-black/50">
+      <div className="w-full max-w-md mx-auto relative z-10 my-auto">
+        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-black/50">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               Welcome back
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-xs sm:text-sm">
               Sign in to manage and monitor your intelligent agents
             </p>
           </div>
@@ -73,7 +73,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-all"
                 placeholder="you@domain.com"
                 required
               />
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-all"
                 placeholder="••••••••"
                 required
               />
